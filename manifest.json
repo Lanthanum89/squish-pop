@@ -1,0 +1,19 @@
+{
+  "name": "Pop Pop Bloom",
+  "short_name": "Pop Pop",
+  "description": "Kawaii balloon-popping game with blind box collectibles for Amelia",
+  "start_url": "/squish-pop/",
+  "scope": "/squish-pop/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#FFB6D9",
+  "background_color": "#FFD6E8",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

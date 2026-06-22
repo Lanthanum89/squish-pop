@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Pop Pop Bloom</title>
+  <meta name="theme-color" content="#FFB6D9">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Menu Screen -->
+  <div id="screen-menu" class="screen active">
+    <div class="menu-logo">🎈</div>
+    <h1 class="title">Pop Pop Bloom</h1>
+    <p class="subtitle">Tap the balloons!</p>
+    <div class="menu-buttons">
+      <button class="btn btn-primary" id="btn-endless">Endless Pop</button>
+      <button class="btn btn-secondary" id="btn-hunt">Blind Box Hunt</button>
+      <button class="btn btn-ghost" id="btn-album">My Collection</button>
+      <button class="btn btn-ghost" id="btn-settings">Settings</button>
+    </div>
+    <div class="menu-footer">For Amelia 🌸</div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="screen-game" class="screen">
+    <div class="game-hud">
+      <button class="btn-back" id="btn-back-game">←</button>
+      <div class="score-display">
+        <span id="score">0</span>
+        <span class="score-label">pops</span>
+      </div>
+      <div class="hud-mode" id="hud-mode"></div>
+    </div>
+    <div class="combo-display" id="combo-display"></div>
+    <div id="game-area"></div>
+    <div id="mascot">🐾</div>
+
+    <!-- Blind Box Reveal Modal -->
+    <div id="collect-reveal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-sparkles">✨✨✨</div>
+        <div id="collect-emoji" class="collect-emoji">🐱</div>
+        <div id="collect-name" class="collect-name">Galaxy Kitten</div>
+        <div id="collect-rarity" class="collect-rarity">Ultra Rare!</div>
+        <button class="btn btn-primary" id="btn-collect-ok">Yay! Add to Album</button>
+      </div>
+    </div>
+
+    <!-- Round End Modal (Hunt mode) -->
+    <div id="round-end" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div style="font-size:3rem">🎉</div>
+        <h2>Round over!</h2>
+        <p id="round-score-text"></p>
+        <button class="btn btn-primary" id="btn-play-again">Play Again</button>
+        <button class="btn btn-ghost" id="btn-to-menu">Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Album Screen -->
+  <div id="screen-album" class="screen screen-scroll">
+    <div class="screen-header">
+      <button class="btn-back" id="btn-back-album">←</button>
+      <h2>My Collection</h2>
+    </div>
+    <div id="album-progress" class="album-progress"></div>
+    <div id="album-grid" class="album-grid"></div>
+  </div>
+
+  <!-- Settings Screen -->
+  <div id="screen-settings" class="screen screen-scroll">
+    <div class="screen-header">
+      <button class="btn-back" id="btn-back-settings">←</button>
+      <h2>Settings</h2>
+    </div>
+    <div class="settings-list">
+      <label class="setting-row">
+        <span>Sound effects</span>
+        <input type="checkbox" id="toggle-sound" checked>
+      </label>
+      <div class="setting-row">
+        <span>Difficulty</span>
+        <select id="select-difficulty">
+          <option value="easy">Easy 🌸</option>
+          <option value="normal" selected>Normal ✨</option>
+          <option value="hard">Hard 🔥</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/collectibles.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/album.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
