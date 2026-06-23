@@ -569,3 +569,14 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
     font-size: 1.8rem;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  #game-area.shake { animation: none; }
+  #score.score-bump { animation: none; }
+  .balloon { animation-duration: 0.01ms !important; }
+  .particle { animation-duration: 0.01ms !important; }
+  .milestone-toast { animation-duration: 0.01ms !important; }
+  .collect-new-badge { animation: none; }
+  #mascot.excited { animation: none; }
+  .modal-card { animation: none; }
+}

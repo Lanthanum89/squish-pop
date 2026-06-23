@@ -131,13 +131,14 @@ const Game = (() => {
     void scoreEl.offsetWidth;
     scoreEl.classList.add('score-bump');
 
+    checkMilestone();
+
     if (isBlindBox) {
       Audio.blindBoxSound();
       showReveal();
     } else {
       Audio.popSound();
       handleCombo();
-      checkMilestone();
       if (currentMode === 'hunt') checkHuntEnd();
     }
   }
@@ -165,7 +166,7 @@ const Game = (() => {
 
   function checkMilestone() {
     for (let i = 0; i < MILESTONES.length; i++) {
-      if (totalPops === MILESTONES[i] && lastMilestone < MILESTONES[i]) {
+      if (totalPops >= MILESTONES[i] && lastMilestone < MILESTONES[i]) {
         lastMilestone = MILESTONES[i];
         showMilestone(MILESTONE_TEXTS[i] || 'Incredible! 🏆', MILESTONES[i]);
         celebrationBurst();
