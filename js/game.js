@@ -9,15 +9,26 @@ const Game = (() => {
   let huntTotal = 15;
   let allHuntSpawned = false;
   let running = false;
+  let totalPops = 0;
+  let lastMilestone = 0;
 
-  const COMBO_TEXTS = ['Daebak! ✨', 'Slay! 💅', 'On fire! 🔥', 'So cute! 🌸', 'Iconic! 💖'];
-  const PASTEL_COLORS = ['#FFB6D9', '#FFD6E8', '#C9E8FF', '#A8D8FF', '#C8F0CC', '#FFF0B0', '#E8C8FF'];
+  const COMBO_TEXTS = [
+    'Daebak! ✨', 'Slay! 💅', 'On fire! 🔥', 'So cute! 🌸', 'Iconic! 💖',
+    'Kawaii! 🎀', 'Omo! 💜', 'Yaaas! 🌟', 'Purrfect! 🐾', 'Sparkle! 💫',
+    'Uwu! 🩷', 'Bam! 💥', 'Vibe check! ✅', 'No cap! 🧢',
+  ];
+  const PASTEL_COLORS = ['#FFB6D9', '#FFD6E8', '#C9E8FF', '#A8D8FF', '#C8F0CC', '#FFF0B0', '#E8C8FF', '#FFCBA4', '#B5EAD7', '#FFDAC1'];
   const SIZES = [60, 72, 84, 96];
+  const MILESTONES = [10, 25, 50, 100, 150, 200, 300, 500];
+  const MILESTONE_TEXTS = ['Nice! 🎉', 'Amazing! 🌟', 'On a roll! 🔥', 'Legendary! 👑', 'Unstoppable! 💎', 'Queen! 👸', 'Mythic! 🦄', 'GOAT! 🏆'];
+  const PARTICLE_SHAPES = ['circle', 'star', 'heart'];
 
   function init(mode) {
     currentMode = mode;
     score = 0;
     comboCount = 0;
+    totalPops = 0;
+    lastMilestone = 0;
     allHuntSpawned = false;
     running = true;
 
@@ -69,7 +80,8 @@ const Game = (() => {
     const size = SIZES[Math.floor(Math.random() * SIZES.length)];
     const color = PASTEL_COLORS[Math.floor(Math.random() * PASTEL_COLORS.length)];
     const x = Math.random() * (window.innerWidth - size - 20) + 10;
-    const floatMs = 5000 + Math.random() * 3000;
+    const floatMs = 4500 + Math.random() * 3500;
+    const wobble = (Math.random() * 15 + 8).toFixed(0);
 
     const el = document.createElement('div');
     el.className = 'balloon' + (isBlindBox ? ' blind-box' : '');
@@ -81,6 +93,7 @@ const Game = (() => {
         ? 'linear-gradient(135deg,#FFB6D9 0%,#C9E8FF 50%,#FFF0B0 100%)'
         : color};
       animation-duration:${floatMs}ms;
+      --wobble:${wobble}px;
     `;
     el.innerHTML = isBlindBox
       ? '<span class="balloon-icon">🎁</span>'
@@ -106,9 +119,17 @@ const Game = (() => {
     const rect = el.getBoundingClientRect();
     el.parentNode.removeChild(el);
 
-    burst(rect.left + rect.width / 2, rect.top + rect.height / 2, isBlindBox);
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    burst(cx, cy, isBlindBox);
+    screenShake();
+
     score++;
+    totalPops++;
     scoreEl.textContent = score;
+    scoreEl.classList.remove('score-bump');
+    void scoreEl.offsetWidth;
+    scoreEl.classList.add('score-bump');
 
     if (isBlindBox) {
       Audio.blindBoxSound();
@@ -116,6 +137,7 @@ const Game = (() => {
     } else {
       Audio.popSound();
       handleCombo();
+      checkMilestone();
       if (currentMode === 'hunt') checkHuntEnd();
     }
   }
@@ -125,47 +147,120 @@ const Game = (() => {
     clearTimeout(comboTimer);
     if (comboCount >= 3) {
       const text = COMBO_TEXTS[Math.floor(Math.random() * COMBO_TEXTS.length)];
+      const multiplier = Math.min(comboCount, 10);
       comboEl.textContent = `×${comboCount} ${text}`;
       comboEl.classList.add('active');
       mascotEl.classList.add('excited');
+      if (comboCount >= 5) {
+        score += multiplier - 1;
+        scoreEl.textContent = score;
+      }
     }
     comboTimer = setTimeout(() => {
       comboCount = 0;
       comboEl.classList.remove('active');
       mascotEl.classList.remove('excited');
-    }, 1500);
+    }, 1800);
+  }
+
+  function checkMilestone() {
+    for (let i = 0; i < MILESTONES.length; i++) {
+      if (totalPops === MILESTONES[i] && lastMilestone < MILESTONES[i]) {
+        lastMilestone = MILESTONES[i];
+        showMilestone(MILESTONE_TEXTS[i] || 'Incredible! 🏆', MILESTONES[i]);
+        celebrationBurst();
+        Audio.milestoneSound();
+        break;
+      }
+    }
+  }
+
+  function showMilestone(text, count) {
+    const el = document.createElement('div');
+    el.className = 'milestone-toast';
+    el.innerHTML = `<span class="milestone-count">${count} pops!</span><span class="milestone-text">${text}</span>`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2200);
+  }
+
+  function celebrationBurst() {
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    const palette = ['#FFD700', '#FF69B4', '#00BFFF', '#FFB6D9', '#E8C8FF', '#C8F0CC', '#FFF0B0'];
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      const shape = PARTICLE_SHAPES[Math.floor(Math.random() * PARTICLE_SHAPES.length)];
+      p.className = 'particle particle-' + shape;
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 80 + Math.random() * 160;
+      const size = 6 + Math.random() * 12;
+      p.style.cssText = `
+        left:${cx + (Math.random() - 0.5) * 200}px;
+        top:${cy + (Math.random() - 0.5) * 200}px;
+        width:${size}px;height:${size}px;
+        background:${palette[Math.floor(Math.random() * palette.length)]};
+        --dx:${(Math.cos(angle) * dist).toFixed(1)}px;
+        --dy:${(Math.sin(angle) * dist).toFixed(1)}px;
+        animation-duration:${0.8 + Math.random() * 0.6}s;
+      `;
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 1500);
+    }
+  }
+
+  function screenShake() {
+    if (!gameArea) return;
+    gameArea.classList.remove('shake');
+    void gameArea.offsetWidth;
+    gameArea.classList.add('shake');
+    setTimeout(() => gameArea.classList.remove('shake'), 200);
   }
 
   function burst(cx, cy, gold) {
     const palette = gold
       ? ['#FFD700', '#FFB6D9', '#C9E8FF', '#E8C8FF', '#FFF0B0']
       : ['#FFB6D9', '#C9E8FF', '#C8F0CC', '#FFF0B0', '#E8C8FF'];
-    for (let i = 0; i < 12; i++) {
+    const count = gold ? 20 : 14;
+    for (let i = 0; i < count; i++) {
       const p = document.createElement('div');
-      p.className = 'particle';
-      const angle = (i / 12) * Math.PI * 2;
-      const dist = 40 + Math.random() * 45;
+      const shape = PARTICLE_SHAPES[Math.floor(Math.random() * PARTICLE_SHAPES.length)];
+      p.className = 'particle particle-' + shape;
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+      const dist = (gold ? 50 : 40) + Math.random() * (gold ? 70 : 50);
+      const size = 6 + Math.random() * 8;
       p.style.cssText = `
         left:${cx}px;top:${cy}px;
+        width:${size}px;height:${size}px;
         background:${palette[i % palette.length]};
         --dx:${(Math.cos(angle) * dist).toFixed(1)}px;
         --dy:${(Math.sin(angle) * dist).toFixed(1)}px;
+        animation-duration:${0.5 + Math.random() * 0.3}s;
       `;
       document.body.appendChild(p);
-      setTimeout(() => p.remove(), 600);
+      setTimeout(() => p.remove(), 900);
     }
   }
 
   function showReveal() {
     const c = rollCollectible();
-    addToCollection(c.id);
+    const isNew = addToCollection(c.id);
     const RARITY_LABEL = { common: 'Common 🌸', rare: 'Rare ✨', ultra: 'Ultra Rare! 🌟' };
     document.getElementById('collect-emoji').textContent = c.emoji;
     document.getElementById('collect-name').textContent  = c.name;
     document.getElementById('collect-rarity').textContent = RARITY_LABEL[c.rarity];
-    document.getElementById('collect-reveal').classList.remove('hidden');
+
+    const newBadge = document.getElementById('collect-new');
+    if (newBadge) newBadge.style.display = isNew ? 'block' : 'none';
+
+    const modal = document.getElementById('collect-reveal');
+    modal.classList.remove('hidden');
+
+    if (c.rarity === 'ultra') {
+      celebrationBurst();
+    }
+
     document.getElementById('btn-collect-ok').onclick = () => {
-      document.getElementById('collect-reveal').classList.add('hidden');
+      modal.classList.add('hidden');
       if (currentMode === 'hunt') checkHuntEnd();
     };
   }
@@ -183,6 +278,7 @@ const Game = (() => {
     document.getElementById('round-score-text').textContent =
       `You popped ${score} balloon${score !== 1 ? 's' : ''}!`;
     document.getElementById('round-end').classList.remove('hidden');
+    celebrationBurst();
   }
 
   function stop() {
