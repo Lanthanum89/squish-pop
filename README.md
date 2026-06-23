@@ -1,4 +1,4 @@
-# Pop Pop Bloom 🎈
+# Squish Pop! 🎈
 
 Kawaii balloon-popping PWA for Amelia. Pastel pink/blue, Kpop energy, blind box collectibles.
 
