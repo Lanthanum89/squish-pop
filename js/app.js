@@ -3,6 +3,18 @@ let currentGameMode = 'endless';
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  if (id === 'screen-menu') updateMenuStats();
+}
+
+function updateMenuStats() {
+  const stats = Album.getStats();
+  const el = document.getElementById('menu-stats');
+  el.innerHTML = `
+    <div class="menu-stat">
+      <span class="menu-stat-icon">🎈</span>
+      ${stats.owned} / ${stats.total} Friends Found
+    </div>
+  `;
 }
 
 // Menu buttons
@@ -57,3 +69,6 @@ diffSelect.addEventListener('change', () => Storage.set('difficulty', diffSelect
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
+
+// Initial menu stats
+updateMenuStats();
