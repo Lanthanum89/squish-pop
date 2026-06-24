@@ -15,7 +15,6 @@
   --purple:      #E8C8FF;
   --green:       #C8F0CC;
   --yellow:      #FFF0B0;
-  --gold:        #FFD700;
   --text:        #6b4c6b;
   --text-light:  #a07090;
   --radius:      20px;
@@ -754,4 +753,5 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
   #mascot.excited { animation: none; }
   .modal-card { animation: none; }
   .menu-balloon { animation: none; }
+  .album-progress-fill { transition: none; }
 }
