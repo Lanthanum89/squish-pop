@@ -113,12 +113,12 @@ const Game = (() => {
 
     gameArea.appendChild(el);
 
-    setTimeout(() => {
+    el.addEventListener('animationend', () => {
       if (el.parentNode) {
         el.parentNode.removeChild(el);
         if (currentMode === 'hunt') checkHuntEnd();
       }
-    }, floatMs + 100);
+    }, { once: true });
   }
 
   function pop(el, isBlindBox) {
