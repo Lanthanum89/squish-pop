@@ -491,6 +491,14 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
 .collect-emoji   { font-size: 4rem; }
 .collect-name    { font-size: 1.4rem; font-weight: 800; }
 .collect-rarity  { font-size: 0.95rem; color: var(--text-light); margin-bottom: 6px; }
+.collect-auto-close {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-light);
+  background: var(--pink-light);
+  border-radius: 999px;
+  padding: 6px 12px;
+}
 .rarity-ultra    { color: #b040b0; font-weight: 700; }
 
 .modal-card h2   { font-size: 1.6rem; font-weight: 800; }

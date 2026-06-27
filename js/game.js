@@ -9,6 +9,7 @@ const Game = (() => {
   let huntTotal = 15;
   let allHuntSpawned = false;
   let running = false;
+  let revealTimer = null;
   let totalPops = 0;
   let lastMilestone = 0;
 
@@ -22,6 +23,7 @@ const Game = (() => {
   const MILESTONES = [10, 25, 50, 100, 150, 200, 300, 500];
   const MILESTONE_TEXTS = ['Nice! 🎉', 'Amazing! 🌟', 'On a roll! 🔥', 'Legendary! 👑', 'Unstoppable! 💎', 'Queen! 👸', 'Mythic! 🦄', 'GOAT! 🏆'];
   const PARTICLE_SHAPES = ['circle', 'star', 'heart'];
+  const REVEAL_AUTO_CLOSE_MS = 1400;
 
   function init(mode) {
     currentMode = mode;
@@ -39,6 +41,8 @@ const Game = (() => {
 
     gameArea.innerHTML = '';
     scoreEl.textContent = '0';
+    clearTimeout(revealTimer);
+    revealTimer = null;
     document.getElementById('collect-reveal').classList.add('hidden');
     document.getElementById('round-end').classList.add('hidden');
     document.getElementById('hud-mode').textContent = mode === 'hunt' ? '🎁 Blind Box Hunt' : '♾ Endless Pop';
@@ -260,10 +264,12 @@ const Game = (() => {
       celebrationBurst();
     }
 
-    document.getElementById('btn-collect-ok').onclick = () => {
+    clearTimeout(revealTimer);
+    revealTimer = setTimeout(() => {
       modal.classList.add('hidden');
+      revealTimer = null;
       if (currentMode === 'hunt') checkHuntEnd();
-    };
+    }, REVEAL_AUTO_CLOSE_MS);
   }
 
   function checkHuntEnd() {
@@ -286,6 +292,8 @@ const Game = (() => {
     running = false;
     clearTimeout(spawnTimer);
     clearTimeout(comboTimer);
+    clearTimeout(revealTimer);
+    revealTimer = null;
     if (gameArea) gameArea.innerHTML = '';
     document.getElementById('collect-reveal').classList.add('hidden');
     document.getElementById('round-end').classList.add('hidden');

@@ -1,4 +1,4 @@
-const CACHE = 'ppb-v4';
+const CACHE = 'ppb-v5';
 const ASSETS = [
   '/squish-pop/',
   '/squish-pop/index.html',
@@ -18,6 +18,10 @@ self.addEventListener('install', e => {
   self.skipWaiting();
 });
 
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -27,8 +31,35 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
+async function networkFirst(request, fallbackKey) {
+  const cache = await caches.open(CACHE);
+  try {
+    const response = await fetch(request);
+    if (response && response.ok) {
+      await cache.put(request, response.clone());
+      if (fallbackKey) await cache.put(fallbackKey, response.clone());
+    }
+    return response;
+  } catch (err) {
+    const cached = await cache.match(request);
+    if (cached) return cached;
+    if (fallbackKey) {
+      const fallback = await cache.match(fallbackKey);
+      if (fallback) return fallback;
+    }
+    throw err;
+  }
+}
+
 self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
-  );
+  if (e.request.method !== 'GET') return;
+  const url = new URL(e.request.url);
+  if (url.origin !== self.location.origin) return;
+
+  if (e.request.mode === 'navigate') {
+    e.respondWith(networkFirst(e.request, '/squish-pop/index.html'));
+    return;
+  }
+
+  e.respondWith(networkFirst(e.request));
 });
