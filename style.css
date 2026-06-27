@@ -130,8 +130,8 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
 .menu-balloon {
   position: absolute;
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  opacity: 0.25;
-  animation: menuFloat 8s ease-in-out infinite alternate;
+  opacity: 0.3;
+  animation: menuFloat 5.6s ease-in-out infinite alternate;
 }
 .menu-balloon-1 {
   width: 60px; height: 75px;
@@ -143,19 +143,47 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
   width: 45px; height: 56px;
   background: var(--blue);
   top: 18%; right: 10%;
-  animation-delay: -3s;
-  animation-duration: 10s;
+  animation-delay: -1.8s;
+  animation-duration: 6.4s;
 }
 .menu-balloon-3 {
   width: 52px; height: 65px;
   background: var(--purple);
   bottom: 14%; left: 15%;
-  animation-delay: -5s;
-  animation-duration: 9s;
+  animation-delay: -2.4s;
+  animation-duration: 5.9s;
+}
+.menu-balloon-4 {
+  width: 40px; height: 50px;
+  background: var(--green);
+  top: 34%; left: 4%;
+  animation-delay: -1.2s;
+  animation-duration: 5.2s;
+}
+.menu-balloon-5 {
+  width: 56px; height: 70px;
+  background: var(--yellow);
+  bottom: 10%; right: 8%;
+  animation-delay: -3.4s;
+  animation-duration: 6.1s;
+}
+.menu-balloon-6 {
+  width: 34px; height: 44px;
+  background: var(--pink-light);
+  top: 56%; right: 20%;
+  animation-delay: -0.9s;
+  animation-duration: 4.8s;
+}
+.menu-balloon-7 {
+  width: 48px; height: 60px;
+  background: var(--blue-light);
+  top: 8%; left: 42%;
+  animation-delay: -2.8s;
+  animation-duration: 5.4s;
 }
 @keyframes menuFloat {
   0%   { transform: translateY(0) rotate(-5deg); }
-  100% { transform: translateY(-20px) rotate(5deg); }
+  100% { transform: translateY(-26px) rotate(5deg); }
 }
 
 /* Settings cog */
@@ -285,6 +313,9 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
   inset: 0;
   top: calc(var(--hud-height) + env(safe-area-inset-top));
   overflow: hidden;
+}
+#game-area.paused .balloon {
+  animation-play-state: paused;
 }
 
 /* ── Balloons ───────────────────────────────────────────────── */
@@ -469,6 +500,15 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
 }
 .modal-overlay.hidden { display: none; }
 
+.modal-overlay#collect-reveal {
+  background: none;
+  backdrop-filter: none;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: calc(var(--hud-height) + 12px + env(safe-area-inset-top)) 12px 0;
+  pointer-events: none;
+}
+
 .modal-card {
   background: #fff;
   border-radius: 28px;
@@ -481,6 +521,27 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
   animation: popIn 0.38s cubic-bezier(.34,1.56,.64,1);
   max-width: min(360px, calc(100vw - 32px));
   width: 90%;
+}
+.modal-overlay#collect-reveal .modal-card {
+  width: auto;
+  max-width: min(280px, calc(100vw - 24px));
+  border-radius: 18px;
+  padding: 14px 16px;
+  gap: 4px;
+  box-shadow: 0 10px 24px rgba(107, 76, 107, 0.16);
+}
+.modal-overlay#collect-reveal .modal-sparkles {
+  font-size: 1rem;
+  letter-spacing: 2px;
+}
+.modal-overlay#collect-reveal .collect-emoji {
+  font-size: 2.4rem;
+}
+.modal-overlay#collect-reveal .collect-name {
+  font-size: 1.1rem;
+}
+.modal-overlay#collect-reveal .collect-rarity {
+  margin-bottom: 2px;
 }
 @keyframes popIn {
   from { transform: scale(0.5); opacity: 0; }

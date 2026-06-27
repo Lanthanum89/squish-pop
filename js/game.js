@@ -8,6 +8,7 @@ const Game = (() => {
   let currentMode = 'endless';
   let huntTotal = 15;
   let allHuntSpawned = false;
+  let paused = false;
   let running = false;
   let revealTimer = null;
   let totalPops = 0;
@@ -32,6 +33,7 @@ const Game = (() => {
     totalPops = 0;
     lastMilestone = 0;
     allHuntSpawned = false;
+    paused = false;
     running = true;
 
     gameArea = document.getElementById('game-area');
@@ -40,6 +42,7 @@ const Game = (() => {
     mascotEl  = document.getElementById('mascot');
 
     gameArea.innerHTML = '';
+    gameArea.classList.remove('paused');
     scoreEl.textContent = '0';
     clearTimeout(revealTimer);
     revealTimer = null;
@@ -58,7 +61,7 @@ const Game = (() => {
   }
 
   function scheduleNext() {
-    if (!running) return;
+    if (!running || paused) return;
     spawnTimer = setTimeout(() => {
       spawnBalloon(Math.random() < 0.15);
       spawnInterval = Math.max(380, spawnInterval * 0.985);
@@ -119,7 +122,7 @@ const Game = (() => {
   }
 
   function pop(el, isBlindBox) {
-    if (!el.parentNode || !running) return;
+    if (!el.parentNode || !running || paused) return;
     const rect = el.getBoundingClientRect();
     el.parentNode.removeChild(el);
 
@@ -258,6 +261,9 @@ const Game = (() => {
     if (newBadge) newBadge.style.display = isNew ? 'block' : 'none';
 
     const modal = document.getElementById('collect-reveal');
+    paused = true;
+    if (gameArea) gameArea.classList.add('paused');
+    clearTimeout(spawnTimer);
     modal.classList.remove('hidden');
 
     if (c.rarity === 'ultra') {
@@ -267,7 +273,10 @@ const Game = (() => {
     clearTimeout(revealTimer);
     revealTimer = setTimeout(() => {
       modal.classList.add('hidden');
+      paused = false;
+      if (gameArea) gameArea.classList.remove('paused');
       revealTimer = null;
+      if (currentMode === 'endless' && running) scheduleNext();
       if (currentMode === 'hunt') checkHuntEnd();
     }, REVEAL_AUTO_CLOSE_MS);
   }
@@ -290,11 +299,13 @@ const Game = (() => {
 
   function stop() {
     running = false;
+    paused = false;
     clearTimeout(spawnTimer);
     clearTimeout(comboTimer);
     clearTimeout(revealTimer);
     revealTimer = null;
     if (gameArea) gameArea.innerHTML = '';
+    if (gameArea) gameArea.classList.remove('paused');
     document.getElementById('collect-reveal').classList.add('hidden');
     document.getElementById('round-end').classList.add('hidden');
     if (comboEl)  comboEl.classList.remove('active');
