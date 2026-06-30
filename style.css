@@ -249,6 +249,11 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
   color: var(--text);
   border: 2px solid rgba(255,182,217,.35);
 }
+.btn-lives {
+  background: linear-gradient(135deg, #FF8FAB, #e0365e);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(224,54,94,.35);
+}
 .btn-back {
   background: rgba(255,255,255,.75);
   border: none;
@@ -288,6 +293,29 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
 #score       { font-size: clamp(1.75rem, 5vw, 2.2rem); font-weight: 800; }
 .score-label { font-size: 0.85rem; color: var(--text-light); }
 .hud-mode    { font-size: 0.78rem; color: var(--text-light); font-weight: 600; white-space: nowrap; }
+.hud-right   { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+
+.lives-display {
+  display: flex;
+  gap: 1px;
+  font-size: 1rem;
+  line-height: 1;
+}
+.lives-display.hidden { display: none; }
+.heart-lost { filter: grayscale(1) opacity(0.35); }
+
+@keyframes missFlash {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+.miss-flash {
+  position: fixed;
+  inset: 0;
+  background: rgba(220, 38, 70, 0.22);
+  pointer-events: none;
+  z-index: 99;
+  animation: missFlash 0.42s ease-out forwards;
+}
 
 .combo-display {
   position: fixed;
@@ -824,4 +852,5 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
   .modal-card { animation: none; }
   .menu-balloon { animation: none; }
   .album-progress-fill { transition: none; }
+  .miss-flash { animation: none; }
 }

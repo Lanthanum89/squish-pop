@@ -37,6 +37,7 @@
     <div class="menu-buttons">
       <button class="btn btn-primary" id="btn-endless">Endless Pop</button>
       <button class="btn btn-secondary" id="btn-hunt">Blind Box Hunt</button>
+      <button class="btn btn-lives" id="btn-lives">Pop or Drop! 💔</button>
       <button class="btn btn-ghost" id="btn-album">My Collection</button>
     </div>
     <div class="menu-footer">Made with ❤️ for Amelia</div>
@@ -50,7 +51,10 @@
         <span id="score">0</span>
         <span class="score-label">pops</span>
       </div>
-      <div class="hud-mode" id="hud-mode"></div>
+      <div class="hud-right">
+        <div class="lives-display hidden" id="lives-display"></div>
+        <div class="hud-mode" id="hud-mode"></div>
+      </div>
     </div>
     <div class="combo-display" id="combo-display"></div>
     <div id="game-area"></div>
@@ -68,11 +72,11 @@
       </div>
     </div>
 
-    <!-- Round End Modal (Hunt mode) -->
+    <!-- Round End / Game Over Modal -->
     <div id="round-end" class="modal-overlay hidden">
       <div class="modal-card">
-        <div style="font-size:3rem">🎉</div>
-        <h2>Round over!</h2>
+        <div id="round-end-emoji" style="font-size:3rem">🎉</div>
+        <h2 id="round-end-title">Round over!</h2>
         <p id="round-score-text"></p>
         <button class="btn btn-primary" id="btn-play-again">Play Again</button>
         <button class="btn btn-ghost" id="btn-to-menu">Menu</button>
