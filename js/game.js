@@ -109,7 +109,7 @@ const Game = (() => {
     el.addEventListener('pointerdown', e => {
       e.preventDefault();
       pop(el, isBlindBox);
-    }, { once: true });
+    });
 
     gameArea.appendChild(el);
 
