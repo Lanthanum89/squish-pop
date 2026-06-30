@@ -128,6 +128,13 @@ const Game = (() => {
 
     gameArea.appendChild(el);
 
+    // Reduced-motion CSS sets animation-duration: 0.01ms !important, which would
+    // fire animationend immediately in lives mode, causing instant game-over.
+    // Override it so lives-mode balloons always float at full duration.
+    if (currentMode === 'lives' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.style.setProperty('animation-duration', `${floatMs}ms`, 'important');
+    }
+
     el.addEventListener('animationend', () => {
       if (el.parentNode) {
         el.parentNode.removeChild(el);
