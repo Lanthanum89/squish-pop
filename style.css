@@ -316,6 +316,7 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
 }
 #game-area.paused .balloon {
   animation-play-state: paused;
+  pointer-events: none;
 }
 
 /* ── Balloons ───────────────────────────────────────────────── */
