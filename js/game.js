@@ -13,6 +13,8 @@ const Game = (() => {
   let revealTimer = null;
   let totalPops = 0;
   let lastMilestone = 0;
+  let livesRemaining = 0;
+  let maxLives = 3;
 
   const COMBO_TEXTS = [
     'Daebak! ✨', 'Slay! 💅', 'On fire! 🔥', 'So cute! 🌸', 'Iconic! 💖',
@@ -48,12 +50,25 @@ const Game = (() => {
     revealTimer = null;
     document.getElementById('collect-reveal').classList.add('hidden');
     document.getElementById('round-end').classList.add('hidden');
-    document.getElementById('hud-mode').textContent = mode === 'hunt' ? '🎁 Blind Box Hunt' : '♾ Endless Pop';
+    document.getElementById('hud-mode').textContent =
+      mode === 'hunt'  ? '🎁 Blind Box Hunt' :
+      mode === 'lives' ? '💔 Pop or Drop!' :
+      '♾ Endless Pop';
 
     const diff = Storage.get('difficulty', 'normal');
     spawnInterval = { easy: 1600, normal: 1200, hard: 750 }[diff];
 
-    if (mode === 'endless') {
+    const livesEl = document.getElementById('lives-display');
+    if (mode === 'lives') {
+      maxLives = { easy: 5, normal: 3, hard: 1 }[diff];
+      livesRemaining = maxLives;
+      if (livesEl) livesEl.classList.remove('hidden');
+      updateLivesDisplay();
+    } else {
+      if (livesEl) livesEl.classList.add('hidden');
+    }
+
+    if (mode === 'endless' || mode === 'lives') {
       scheduleNext();
     } else {
       spawnHunt();
@@ -113,10 +128,18 @@ const Game = (() => {
 
     gameArea.appendChild(el);
 
+    // Reduced-motion CSS sets animation-duration: 0.01ms !important, which would
+    // fire animationend immediately in lives mode, causing instant game-over.
+    // Override it so lives-mode balloons always float at full duration.
+    if (currentMode === 'lives' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.style.setProperty('animation-duration', `${floatMs}ms`, 'important');
+    }
+
     el.addEventListener('animationend', () => {
       if (el.parentNode) {
         el.parentNode.removeChild(el);
         if (currentMode === 'hunt') checkHuntEnd();
+        if (currentMode === 'lives' && !isBlindBox) handleMiss();
       }
     }, { once: true });
   }
@@ -276,7 +299,7 @@ const Game = (() => {
       paused = false;
       if (gameArea) gameArea.classList.remove('paused');
       revealTimer = null;
-      if (currentMode === 'endless' && running) scheduleNext();
+      if ((currentMode === 'endless' || currentMode === 'lives') && running) scheduleNext();
       if (currentMode === 'hunt') checkHuntEnd();
     }, REVEAL_AUTO_CLOSE_MS);
   }
@@ -291,21 +314,63 @@ const Game = (() => {
   function endRound() {
     running = false;
     clearTimeout(spawnTimer);
+    document.getElementById('round-end-emoji').textContent = '🎉';
+    document.getElementById('round-end-title').textContent = 'Round over!';
     document.getElementById('round-score-text').textContent =
       `You popped ${score} balloon${score !== 1 ? 's' : ''}!`;
     document.getElementById('round-end').classList.remove('hidden');
     celebrationBurst();
   }
 
+  function handleMiss() {
+    if (!running || paused) return;
+    livesRemaining = Math.max(0, livesRemaining - 1);
+    Audio.missSound();
+    updateLivesDisplay();
+
+    const flash = document.createElement('div');
+    flash.className = 'miss-flash';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 420);
+
+    if (livesRemaining <= 0) endLivesGame();
+  }
+
+  function updateLivesDisplay() {
+    const el = document.getElementById('lives-display');
+    if (!el) return;
+    let html = '';
+    for (let i = 0; i < maxLives; i++) {
+      html += `<span class="heart${i >= livesRemaining ? ' heart-lost' : ''}">❤️</span>`;
+    }
+    el.innerHTML = html;
+  }
+
+  function endLivesGame() {
+    running = false;
+    clearTimeout(spawnTimer);
+    clearTimeout(comboTimer);
+    if (comboEl) comboEl.classList.remove('active');
+    if (mascotEl) mascotEl.classList.remove('excited');
+    document.getElementById('round-end-emoji').textContent = '💔';
+    document.getElementById('round-end-title').textContent = 'Game Over!';
+    document.getElementById('round-score-text').textContent =
+      `You popped ${score} balloon${score !== 1 ? 's' : ''} before running out of lives!`;
+    document.getElementById('round-end').classList.remove('hidden');
+  }
+
   function stop() {
     running = false;
     paused = false;
+    livesRemaining = 0;
     clearTimeout(spawnTimer);
     clearTimeout(comboTimer);
     clearTimeout(revealTimer);
     revealTimer = null;
     if (gameArea) gameArea.innerHTML = '';
     if (gameArea) gameArea.classList.remove('paused');
+    const livesEl = document.getElementById('lives-display');
+    if (livesEl) livesEl.classList.add('hidden');
     document.getElementById('collect-reveal').classList.add('hidden');
     document.getElementById('round-end').classList.add('hidden');
     if (comboEl)  comboEl.classList.remove('active');

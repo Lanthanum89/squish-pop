@@ -30,6 +30,12 @@ document.getElementById('btn-hunt').addEventListener('click', () => {
   Game.init('hunt');
 });
 
+document.getElementById('btn-lives').addEventListener('click', () => {
+  currentGameMode = 'lives';
+  showScreen('screen-game');
+  Game.init('lives');
+});
+
 document.getElementById('btn-album').addEventListener('click', () => {
   showScreen('screen-album');
   Album.render();

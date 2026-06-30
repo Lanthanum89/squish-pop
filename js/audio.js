@@ -77,5 +77,23 @@ const Audio = (() => {
     } catch {}
   }
 
-  return { popSound, blindBoxSound, milestoneSound };
+  function missSound() {
+    if (!Storage.get('sound', true)) return;
+    try {
+      const ac = getCtx();
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.type = 'sine';
+      osc.connect(gain);
+      gain.connect(ac.destination);
+      osc.frequency.setValueAtTime(380, ac.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(140, ac.currentTime + 0.32);
+      gain.gain.setValueAtTime(0.28, ac.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.38);
+      osc.start();
+      osc.stop(ac.currentTime + 0.38);
+    } catch {}
+  }
+
+  return { popSound, blindBoxSound, milestoneSound, missSound };
 })();
