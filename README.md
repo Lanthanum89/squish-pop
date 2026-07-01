@@ -1,6 +1,6 @@
 # Squish Pop! 🎈
 
-A kawaii balloon-popping PWA built for Amelia. Pastel pink/blue palette, Kpop energy, blind box collectibles, and a collect-em-all album.
+A kawaii balloon-popping PWA built for my daughter. Pastel pink/blue palette, Kpop energy, blind box collectibles, and a collect-em-all album.
 
 **Live:** https://lanthanum89.github.io/squish-pop/
 
