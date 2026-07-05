@@ -10,9 +10,11 @@
 :root {
   --pink:        #FFB6D9;
   --pink-light:  #FFD6E8;
+  --pink-bold:   #FF4FA3;
   --blue:        #A8D8FF;
   --blue-light:  #C9E8FF;
   --purple:      #E8C8FF;
+  --purple-bold: #B87CE8;
   --green:       #C8F0CC;
   --yellow:      #FFF0B0;
   --text:        #6b4c6b;
@@ -34,8 +36,15 @@ html, body {
   font-family: var(--font-body);
   background:
     radial-gradient(circle at top, rgba(255,255,255,.75) 0%, rgba(255,255,255,0) 42%),
-    linear-gradient(180deg, var(--blue-light) 0%, var(--pink-light) 100%);
+    linear-gradient(180deg, var(--blue-light) 0%, var(--pink-light) 65%, var(--yellow) 100%);
   color: var(--text);
+}
+
+/* ── Bubble outline heading style ─────────────────────────────── */
+.bubble-text {
+  -webkit-text-stroke: 0.11em #fff;
+  paint-order: stroke fill;
+  text-shadow: 0 3px 0 rgba(107,76,107,.14);
 }
 
 body {
@@ -76,7 +85,7 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
 }
 
 .menu-logo   { font-size: clamp(68px, 14vw, 88px); margin-bottom: 10px; }
-.title       { font-size: clamp(2.3rem, 6vw, 4rem); font-weight: 800; letter-spacing: -0.03em; }
+.title       { font-size: clamp(2.3rem, 6vw, 4rem); font-weight: 800; letter-spacing: -0.03em; color: var(--pink-bold); }
 .subtitle    { font-size: clamp(1rem, 2.5vw, 1.15rem); color: var(--text-light); margin-bottom: 12px; }
 .menu-buttons {
   display: flex;
@@ -358,10 +367,21 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
   align-items: center;
   justify-content: center;
   box-shadow:
-    inset -8px -5px 0 rgba(0,0,0,.08),
-    0 4px 14px rgba(0,0,0,.1);
+    inset -10px -8px 0 rgba(0,0,0,.1),
+    0 6px 16px rgba(0,0,0,.14);
 }
 .balloon:active { transform: scale(0.88) !important; }
+.balloon::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 14%;
+  width: 42%;
+  height: 32%;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,.85) 0%, rgba(255,255,255,0) 72%);
+  border-radius: 50%;
+  pointer-events: none;
+}
 
 .balloon.blind-box {
   animation-name: floatUpGlitter;
@@ -603,7 +623,7 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
   width: 100%;
   max-width: var(--content-max);
 }
-.screen-header h2 { font-size: clamp(1.3rem, 4vw, 1.5rem); font-weight: 800; }
+.screen-header h2 { font-size: clamp(1.3rem, 4vw, 1.5rem); font-weight: 800; color: var(--pink-bold); }
 
 /* ── Album ──────────────────────────────────────────────────── */
 .album-progress {
@@ -619,12 +639,21 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
   margin-bottom: 6px;
 }
 .album-progress-bar {
+  position: relative;
   width: 100%;
   height: 12px;
   background: rgba(255,255,255,.6);
   border-radius: 8px;
-  overflow: hidden;
   box-shadow: inset 0 1px 3px rgba(0,0,0,.08);
+}
+.album-progress-bar::after {
+  content: '⭐';
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.18));
 }
 .album-progress-fill {
   height: 100%;
@@ -651,7 +680,7 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
 }
 .album-card {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 18px;
   padding: 10px 5px 8px;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0,0,0,.07);
@@ -676,13 +705,23 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
 
 /* Locked cards */
 .album-card.locked {
-  opacity: 0.55;
-  filter: none;
+  opacity: 1;
+  background: linear-gradient(135deg, var(--purple), var(--purple-bold));
   border-color: transparent;
-  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  box-shadow: 0 3px 10px rgba(184,124,232,.3);
 }
 .album-card.locked .card-emoji {
-  filter: grayscale(1);
+  filter: none;
+}
+.card-emoji-locked {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: rgba(255,255,255,.95);
+  text-shadow: 0 2px 0 rgba(107,76,107,.18);
+}
+.album-card.locked .card-name,
+.album-card.locked .card-rarity-hint {
+  color: rgba(255,255,255,.9);
 }
 
 .card-emoji  { font-size: 1.7rem; margin-bottom: 4px; }

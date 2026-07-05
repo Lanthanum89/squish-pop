@@ -35,7 +35,7 @@ const Album = (() => {
         `;
       } else {
         card.innerHTML = `
-          <div class="card-emoji">❓</div>
+          <div class="card-emoji card-emoji-locked">?</div>
           <div class="card-name">???</div>
           <div class="card-rarity-hint">${RARITY_STARS[c.rarity]}</div>
         `;
