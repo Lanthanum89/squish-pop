@@ -1,4 +1,4 @@
-const CACHE = 'ppb-v5';
+const CACHE = 'ppb-v6';
 const ASSETS = [
   '/squish-pop/',
   '/squish-pop/index.html',
