@@ -236,6 +236,26 @@ h1, h2, .btn, .score-display, .screen-header h2, .modal-card {
   line-height: 1;
 }
 .btn:active { transform: scale(0.93); }
+
+.btn-mode {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-height: 72px;
+  padding: 14px 26px;
+  text-align: left;
+  line-height: 1.2;
+}
+.btn-mode-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+.btn-mode-desc {
+  font-size: 0.76rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
 .btn:focus-visible,
 .btn-back:focus-visible,
 .setting-row select:focus-visible {
