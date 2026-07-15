@@ -3,8 +3,8 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "REPLACE_WITH_PACKAGE_NAME",
-      "sha256_cert_fingerprints": ["REPLACE_WITH_SHA256_FINGERPRINT"]
+      "package_name": "com.squish.pop",
+      "sha256_cert_fingerprints": ["8A:90:B7:D0:75:48:81:D0:28:F6:53:89:D5:87:18:81:6A:CB:53:12:49:6E:F1:22:0B:F8:A9:45:A0:EA:98:D6"]
     }
   }
 ]
