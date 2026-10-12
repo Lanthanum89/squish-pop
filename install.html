@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#FFB6D9">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <title>Install Squish Pop</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 24px; background: #fff4f8; color: #42344b; font: 16px/1.5 system-ui, sans-serif; }
+    main { width: 100%; max-width: 440px; padding: 28px; background: #fff; border: 1px solid #f4dce7; border-radius: 24px; box-shadow: 0 12px 40px #a5557910; }
+    .icon { width: 80px; height: 80px; display: block; margin: 0 auto 20px; }
+    h1 { font-size: 27px; line-height: 1.2; margin: 0 0 12px; text-align: center; }
+    p { margin: 12px 0; }
+    button { display: block; width: 100%; min-height: 52px; margin: 22px 0 14px; border: 0; border-radius: 14px; padding: 12px; background: #d9538b; color: #fff; font: 700 16px system-ui, sans-serif; cursor: pointer; }
+    button:disabled { background: #eee4eb; color: #70616b; cursor: default; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #7357aa; outline-offset: 4px; }
+    #status { color: #655969; font-size: 14px; }
+    a { color: #9f3462; }
+    details { margin-top: 22px; font-size: 13px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #faf4f7; padding: 12px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <main>
+    <img class="icon" src="icons/icon.svg" alt="" width="80" height="80">
+    <h1>Get Squish Pop back</h1>
+    <p>Put your balloon-popping adventure on your home screen.</p>
+    <button id="install" type="button" disabled>Checking installation…</button>
+    <p id="status" role="status">Keep this page open while Chrome checks whether it can offer installation.</p>
+    <p><a href="./">Open the game</a></p>
+    <details><summary>Installation details</summary><pre id="out"></pre></details>
+  </main>
+  <script>
+    const button = document.getElementById('install');
+    const status = document.getElementById('status');
+    const out = document.getElementById('out');
+    const log = (message) => { out.textContent += message + '\n'; };
+    let pendingInstall;
+    let installationReported = false;
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      pendingInstall = event;
+      button.disabled = false;
+      button.textContent = 'Install Squish Pop';
+      status.textContent = 'Ready! Tap Install Squish Pop to open Chrome’s direct installation prompt.';
+      log('beforeinstallprompt received');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      installationReported = true;
+      pendingInstall = null;
+      button.disabled = true;
+      button.textContent = 'Installation reported';
+      status.textContent = 'Chrome reported installation. Look for Squish Pop in your app list and open it from there.';
+      log('appinstalled received');
+    });
+
+    button.addEventListener('click', async () => {
+      if (!pendingInstall) return;
+      const event = pendingInstall;
+      pendingInstall = null;
+      button.disabled = true;
+      button.textContent = 'Opening installation…';
+      try {
+        await event.prompt();
+        const choice = await event.userChoice;
+        log('direct prompt outcome: ' + choice.outcome);
+        if (!installationReported) {
+          button.textContent = 'Reload to try again';
+          status.textContent = choice.outcome === 'accepted'
+            ? 'Installation accepted. Wait for Chrome to finish, then check your app list. Acceptance alone does not confirm completion.'
+            : 'The prompt was dismissed. Reload this page to try again.';
+        }
+      } catch (error) {
+        log('direct prompt failed: ' + error);
+        button.textContent = 'Reload to try again';
+        status.textContent = 'Chrome could not open the prompt. Reload and try again, or share the installation details below.';
+      }
+    });
+
+    log('URL: ' + location.href);
+    log('Browser: ' + navigator.userAgent);
+    log('Secure context: ' + window.isSecureContext);
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then((registration) => {
+        log('Service worker scope: ' + registration.scope);
+        return registration.update();
+      }).catch((error) => {
+        log('Service worker failed: ' + error);
+        if (!pendingInstall && !installationReported) status.textContent = 'Offline setup failed. Check your connection, reload, and share the installation details if it continues.';
+      });
+    } else log('Service workers unsupported');
+
+    setTimeout(() => {
+      if (pendingInstall || installationReported) return;
+      button.textContent = 'Waiting for Chrome…';
+      status.textContent = 'Chrome has not offered a direct prompt yet. Open the game, then return and reload this page. If it still waits, share the installation details below. This does not prove the app is already installed.';
+      log('No direct prompt observed after 12 seconds');
+    }, 12000);
+  </script>
+</body>
+</html>
